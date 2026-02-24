@@ -29,11 +29,13 @@ with tab1:
         
         if st.form_submit_button("ذخیره در سرور ابری"):
             if id_card and name:
-                # ارسال داده به دیتابیس آنلاین
-                res = conn.table("patients").insert([
-                    {"national_id": id_card, "full_name": name, "age": age, "symptoms": symptoms, "prescription": prescription}
-                ]).execute()
-                st.success(f"اطلاعات {name} با موفقیت در سرور ابری ذخیره شد.")
+                try:
+                    res = conn.table("patients").insert([
+                        {"national_id": id_card, "full_name": name, "age": age, "symptoms": symptoms, "prescription": prescription}
+                    ]).execute()
+                    st.success(f"اطلاعات {name} با موفقیت ذخیره شد.")
+                except Exception as e:
+                    st.error(f"خطای دیتابیس: {e}") # این خط علت واقعی را به شما می‌گوید
             else:
                 st.warning("لطفاً کد ملی و نام بیمار را وارد کنید.")
 
@@ -67,4 +69,5 @@ with tab2:
             
     except Exception as e:
         st.error(f"خطا در دریافت اطلاعات: {e}")
+
 
