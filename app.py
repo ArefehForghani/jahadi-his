@@ -1,9 +1,10 @@
 import streamlit as st
 from st_supabase_connection import SupabaseConnection
+import pandas as pd  # اضافه شد
 
 st.set_page_config(page_title="HIS جهادی ابری", layout="wide")
 
-# اتصال به دیتابیس ابری (اطلاعات حساس در تنظیمات مخفی می‌ماند)
+# اتصال به دیتابیس ابری
 conn = st.connection("supabase", type=SupabaseConnection)
 
 st.title("🏥 سامانه یکپارچه سلامت (HIS کوچک)")
@@ -12,7 +13,7 @@ st.title("🏥 سامانه یکپارچه سلامت (HIS کوچک)")
 tab1, tab2 = st.tabs(["ثبت بیمار جدید", "مشاهده پرونده‌ها"])
 
 with tab1:
-    with st.form("patient_form"):
+    with st.form("patient_form", clear_on_submit=True):
         col1, col2 = st.columns(2)
         with col1:
             id_card = st.text_input("کد ملی")
@@ -24,21 +25,42 @@ with tab1:
         prescription = st.text_area("تجویز و دارو")
         
         if st.form_submit_button("ذخیره در سرور ابری"):
-            # ارسال داده به دیتابیس آنلاین
-            data = conn.table("patients").insert([
-                {"national_id": id_card, "full_name": name, "age": age, "symptoms": symptoms, "prescription": prescription}
-            ]).execute()
-            st.success("اطلاعات با موفقیت در سرور ابری ذخیره شد.")
+            if id_card and name:
+                # ارسال داده به دیتابیس آنلاین
+                res = conn.table("patients").insert([
+                    {"national_id": id_card, "full_name": name, "age": age, "symptoms": symptoms, "prescription": prescription}
+                ]).execute()
+                st.success(f"اطلاعات {name} با موفقیت در سرور ابری ذخیره شد.")
+            else:
+                st.warning("لطفاً کد ملی و نام بیمار را وارد کنید.")
 
 with tab2:
     st.subheader("جستجو و لیست بیماران")
-    search_query = st.text_input("جستجوی نام یا کد ملی")
     
     # دریافت اطلاعات از سرور
-    rows = conn.table("patients").select("*").execute()
-    df = pd.DataFrame(rows.data)
-    
-    if not df.empty:
-        if search_query:
-            df = df[df['full_name'].str.contains(search_query) | df['national_id'].str.contains(search_query)]
-        st.dataframe(df)
+    try:
+        response = conn.table("patients").select("*").execute()
+        # استخراج داده‌ها
+        data = response.data
+        
+        if data:
+            df = pd.DataFrame(data)
+            
+            # بخش جستجو
+            search_query = st.text_input("جستجوی نام یا کد ملی")
+            if search_query:
+                # فیلتر کردن دیتافریم بر اساس جستجو
+                df = df[df['full_name'].astype(str).str.contains(search_query) | 
+                        df['national_id'].astype(str).str.contains(search_query)]
+            
+            # نمایش جدول
+            st.dataframe(df, use_container_width=True)
+            
+            # دکمه رفرش
+            if st.button("به‌روزرسانی لیست"):
+                st.rerun()
+        else:
+            st.info("هنوز هیچ بیماری در سیستم ثبت نشده است.")
+            
+    except Exception as e:
+        st.error(f"خطا در دریافت اطلاعات: {e}")
