@@ -5,7 +5,10 @@ import pandas as pd  # اضافه شد
 st.set_page_config(page_title="HIS جهادی ابری", layout="wide")
 
 # اتصال به دیتابیس ابری
-conn = st.connection("supabase", type=SupabaseConnection)
+# روش مستقیم برای اطمینان از اتصال
+tmp_url = "https://vufsmlyybxqyphgozofx.supabase.co"
+tmp_key = "sb_publishable_VqFoEVlp3rLWzwV7Nq6Acg_rXBZS13UuJvG-z_8-2W1"
+conn = st.connection("supabase", type=SupabaseConnection, url=tmp_url, key=tmp_key)
 
 st.title("🏥 سامانه یکپارچه سلامت (HIS کوچک)")
 
@@ -64,3 +67,4 @@ with tab2:
             
     except Exception as e:
         st.error(f"خطا در دریافت اطلاعات: {e}")
+
