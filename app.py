@@ -7,7 +7,7 @@ st.set_page_config(page_title="HIS جهادی ابری", layout="wide")
 # اتصال به دیتابیس ابری
 # روش مستقیم برای اطمینان از اتصال
 tmp_url = "https://vufsmlyybxqyphgozofx.supabase.co"
-tmp_key = "sb_publishable_VqFoEVlp3rLWzwV7Nq6Acg_rXBZS13UuJvG-z_8-2W1"
+tmp_key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ1ZnNtbHl5YnhxeXBoZ296b2Z4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE5NjAwOTcsImV4cCI6MjA4NzUzNjA5N30.Jnz8JiUjgnFv-2GyTlFpf3kTOpp6s-dDNdvWQyEqx4o"
 conn = st.connection("supabase", type=SupabaseConnection, url=tmp_url, key=tmp_key)
 
 st.title("🏥 سامانه یکپارچه سلامت (HIS کوچک)")
@@ -69,5 +69,6 @@ with tab2:
             
     except Exception as e:
         st.error(f"خطا در دریافت اطلاعات: {e}")
+
 
 
