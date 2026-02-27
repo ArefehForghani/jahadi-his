@@ -1,8 +1,16 @@
 {
   "app": "adoring-cannon-h3bzlznb2",
   "port": 80,
+  "platform": "python",
   "build": {
     "location": "iran"
   },
-  "disks": []
+  "args": [
+    "run",
+    "app.py",
+    "--server.port",
+    "80",
+    "--server.address",
+    "0.0.0.0"
+  ]
 }
