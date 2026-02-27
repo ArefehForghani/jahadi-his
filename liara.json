@@ -1,6 +1,6 @@
 {
   "app": "adoring-cannon-h3bzlznb2",
-  "port": 80,
+  "port": 8501,
   "platform": "python",
   "build": {
     "location": "iran"
